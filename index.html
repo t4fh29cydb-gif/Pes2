@@ -1,222 +1,1749 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite League Season 2 - Ultimate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --neon-blue: #00e5ff;
-            --neon-pink: #ff007f;
-            --neon-gold: #ffaa00;
-            --bg-dark: #07030f;
-            --panel-bg: rgba(20, 10, 40, 0.7);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at top, #2b0054 0%, var(--bg-dark) 60%),
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
-            color: #fff; font-family: 'Kanit', sans-serif;
-            margin: 0; padding: 20px; font-size: 12px;
-        }
+<title>ELITE LEAGUE SEASON 2</title>
 
-        .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        /* Header */
-        .header { text-align: center; margin-bottom: 10px; }
-        .header h1 { font-size: 50px; font-weight: 900; margin: 0; font-style: italic; background: linear-gradient(90deg, #fff, #ffb3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255,0,127,0.5); }
-        .header h2 { color: var(--neon-gold); font-size: 24px; margin: -10px 0 10px; letter-spacing: 5px; }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        /* Layout */
-        .main-grid { display: grid; grid-template-columns: 35% 63%; gap: 2%; }
-        .bottom-grid { display: grid; grid-template-columns: 25% 45% 28%; gap: 2%; }
-        
-        .panel {
-            background: var(--panel-bg); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .panel-title { text-align: center; color: var(--neon-blue); font-size: 16px; font-weight: 800; margin-bottom: 15px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 10px; }
+<style>
 
-        /* Table */
-        table { width: 100%; border-collapse: collapse; }
-        th { color: #888; padding: 8px 5px; border-bottom: 1px solid #333; }
-        td { padding: 10px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .rank-1 td { color: var(--neon-gold); font-weight: bold; }
-        
-        /* Cards */
-        .analysis-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .team-card {
-            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
-            padding: 15px; cursor: pointer; transition: 0.3s; text-align: center;
-        }
-        .team-card:hover { transform: translateY(-5px); border-color: var(--neon-blue); box-shadow: 0 5px 15px rgba(0,229,255,0.2); }
-        .team-card h3 { margin: 0 0 5px 0; font-size: 16px; font-weight: 800; }
-        .power-badge { display: inline-block; background: var(--neon-gold); color: #000; padding: 3px 10px; border-radius: 10px; font-weight: 900; font-size: 12px; margin-bottom: 8px; }
-        .style-txt { font-size: 10px; color: var(--neon-blue); }
+:root{
 
-        /* Results & Highlights */
-        .result-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 5px; margin-bottom: 8px; }
-        .result-score { font-size: 16px; font-weight: bold; color: var(--neon-gold); }
-        .highlights-grid { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 8px;}
-        .hl-card { background: rgba(0,0,0,0.5); padding: 10px 5px; border-radius: 8px; border: 1px solid #333;}
-        .hl-title { font-size: 9px; color: var(--neon-blue); margin: 5px 0;}
+--bg:#07030f;
+--panel:#12152b;
+--panel2:#1a2040;
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; backdrop-filter: blur(5px);
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-content {
-            background: #110822; border: 2px solid var(--neon-blue);
-            width: 800px; max-width: 95%; border-radius: 15px; padding: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative;
-        }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; z-index: 10; }
-        .close-btn:hover { color: var(--neon-pink); }
-        .modal-img-container { background: #000; border-radius: 10px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.2); }
-        .modal-img-container img { width: 100%; border-radius: 10px; }
-        .m-title { font-size: 28px; color: var(--neon-blue); font-weight: 900; margin: 0 0 5px 0; }
-        .stat-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;}
-    </style>
+--blue:#00e5ff;
+--pink:#ff007f;
+--gold:#ffb400;
+--green:#00ff8f;
+--red:#ff4d5d;
+
+--text:#ffffff;
+
+}
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Kanit',sans-serif;
+
+}
+
+body{
+
+background:
+
+radial-gradient(circle at top,#2d0f63 0%,#07030f 55%),
+linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+
+background-size:
+100% 100%,
+30px 30px,
+30px 30px;
+
+color:white;
+
+overflow-x:hidden;
+
+}
+
+.container{
+
+width:min(1500px,95%);
+margin:auto;
+padding:25px;
+
+}
+
+header{
+
+text-align:center;
+margin-bottom:25px;
+
+}
+
+header h1{
+
+font-size:60px;
+font-weight:900;
+
+background:
+
+linear-gradient(
+90deg,
+white,
+#ffd6ff,
+#00e5ff
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+letter-spacing:5px;
+
+}
+
+header h2{
+
+color:var(--gold);
+
+font-size:24px;
+
+letter-spacing:8px;
+
+margin-top:-10px;
+
+}
+
+.live{
+
+display:inline-flex;
+
+gap:10px;
+
+padding:10px 20px;
+
+margin-top:15px;
+
+border-radius:40px;
+
+background:rgba(255,255,255,.05);
+
+backdrop-filter:blur(10px);
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+.live-dot{
+
+width:10px;
+height:10px;
+
+border-radius:50%;
+
+background:red;
+
+animation:pulse 1s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{transform:scale(.7);}
+50%{transform:scale(1.3);}
+100%{transform:scale(.7);}
+
+}
+
+.main-grid{
+
+display:grid;
+
+grid-template-columns:35% 63%;
+
+gap:2%;
+
+}
+
+.bottom-grid{
+
+display:grid;
+
+grid-template-columns:25% 45% 28%;
+
+gap:2%;
+
+margin-top:20px;
+
+}
+
+.panel{
+
+background:rgba(20,18,45,.72);
+
+border-radius:20px;
+
+padding:20px;
+
+backdrop-filter:blur(12px);
+
+border:1px solid rgba(255,255,255,.08);
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.panel::before{
+
+content:"";
+
+position:absolute;
+
+left:-40%;
+
+top:0;
+
+width:30%;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.12),
+
+transparent
+
+);
+
+animation:shine 8s infinite;
+
+}
+
+@keyframes shine{
+
+0%{left:-50%;}
+100%{left:150%;}
+
+}
+.panel-title{
+
+font-size:18px;
+
+font-weight:800;
+
+text-align:center;
+
+color:var(--blue);
+
+margin-bottom:18px;
+
+padding-bottom:10px;
+
+border-bottom:1px solid rgba(0,229,255,.2);
+
+letter-spacing:2px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+th{
+
+padding:10px;
+
+font-size:13px;
+
+color:#8ab8ff;
+
+border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+td{
+
+padding:11px;
+
+text-align:center;
+
+font-size:13px;
+
+border-bottom:1px solid rgba(255,255,255,.04);
+
+transition:.25s;
+
+}
+
+tbody tr:hover{
+
+background:rgba(255,255,255,.04);
+
+}
+
+.rank1{
+
+background:linear-gradient(90deg,rgba(255,180,0,.18),transparent);
+
+font-weight:800;
+
+}
+
+.rank2{
+
+background:linear-gradient(90deg,rgba(180,180,180,.12),transparent);
+
+}
+
+.rank3{
+
+background:linear-gradient(90deg,rgba(205,127,50,.12),transparent);
+
+}
+
+.analysis-grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:15px;
+
+}
+
+.team-card{
+
+background:rgba(255,255,255,.05);
+
+border-radius:18px;
+
+padding:18px;
+
+text-align:center;
+
+cursor:pointer;
+
+transition:.3s;
+
+border:1px solid rgba(255,255,255,.08);
+
+}
+
+.team-card:hover{
+
+transform:translateY(-8px);
+
+border-color:var(--blue);
+
+box-shadow:0 0 25px rgba(0,229,255,.25);
+
+}
+
+.team-logo{
+
+width:72px;
+
+height:72px;
+
+margin:auto;
+
+border-radius:50%;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:30px;
+
+background:linear-gradient(135deg,var(--blue),var(--pink));
+
+margin-bottom:12px;
+
+}
+
+.team-card h3{
+
+font-size:17px;
+
+margin-bottom:8px;
+
+}
+
+.power{
+
+display:inline-block;
+
+padding:6px 14px;
+
+border-radius:30px;
+
+background:linear-gradient(90deg,var(--gold),#ffe27d);
+
+color:#111;
+
+font-weight:900;
+
+font-size:13px;
+
+margin-bottom:10px;
+
+}
+
+.style{
+
+font-size:12px;
+
+color:var(--blue);
+
+}
+
+.winrate{
+
+height:8px;
+
+background:rgba(255,255,255,.08);
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-top:12px;
+
+}
+
+.winrate span{
+
+display:block;
+
+height:100%;
+
+background:linear-gradient(90deg,var(--green),var(--blue));
+
+}
+
+.result-card{
+
+background:rgba(255,255,255,.05);
+
+padding:15px;
+
+border-radius:15px;
+
+margin-bottom:15px;
+
+transition:.3s;
+
+}
+
+.result-card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:0 0 20px rgba(255,0,127,.2);
+
+}
+.highlights{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+}
+
+.highlight{
+
+background:rgba(255,255,255,.05);
+
+padding:18px;
+
+border-radius:18px;
+
+text-align:center;
+
+border:1px solid rgba(255,255,255,.08);
+
+transition:.3s;
+
+}
+
+.highlight:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 0 25px rgba(255,180,0,.25);
+
+}
+
+.highlight .icon{
+
+font-size:34px;
+
+margin-bottom:8px;
+
+}
+
+.highlight .title{
+
+font-size:12px;
+
+letter-spacing:2px;
+
+color:var(--blue);
+
+margin-bottom:8px;
+
+}
+
+.form{
+
+display:flex;
+
+justify-content:center;
+
+gap:5px;
+
+margin-top:12px;
+
+}
+
+.form span{
+
+width:15px;
+
+height:15px;
+
+border-radius:50%;
+
+}
+
+.win{
+
+background:#00ff8c;
+
+}
+
+.draw{
+
+background:#ffd84d;
+
+}
+
+.lose{
+
+background:#ff4d5d;
+
+}
+
+.modal{
+
+position:fixed;
+
+inset:0;
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+background:rgba(0,0,0,.85);
+
+backdrop-filter:blur(8px);
+
+z-index:9999;
+
+}
+
+.modal.active{
+
+display:flex;
+
+}
+
+@media(max-width:1200px){
+
+.main-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.bottom-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.analysis-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:700px){
+
+.analysis-grid{
+
+grid-template-columns:1fr;
+
+}
+
+header h1{
+
+font-size:42px;
+
+}
+
+header h2{
+
+font-size:16px;
+
+letter-spacing:4px;
+
+}
+
+.container{
+
+padding:12px;
+
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>ELITE LEAGUE</h1>
-        <h2>SEASON 2 - MATCHDAY 5</h2>
-    </div>
 
-    <!-- MAIN GRID -->
-    <div class="main-grid">
-        <!-- ฝั่งซ้าย: ตารางคะแนน -->
-        <div class="panel">
-            <div class="panel-title">LEAGUE TABLE</div>
-            <table>
-                <tr><th style="text-align:left;">TEAM</th> <th>P</th> <th>W</th> <th>D</th> <th>L</th> <th>GD</th> <th>PTS</th></tr>
-                <tr class="rank-1"><td style="text-align:left; font-size:14px;">👑 อดเลย</td><td>5</td><td>4</td><td>1</td><td>0</td><td>+13</td><td>13</td></tr>
-                <tr><td style="text-align:left;">2. Paris FC</td><td>5</td><td>4</td><td>0</td><td>1</td><td>+10</td><td>12</td></tr>
-                <tr><td style="text-align:left;">3. Inazuma Eleven</td><td>5</td><td>3</td><td>0</td><td>2</td><td>+4</td><td>9</td></tr>
-                <tr><td style="text-align:left;">4. นักล่ารอยยิ้ม</td><td>5</td><td>2</td><td>0</td><td>3</td><td>-6</td><td>6</td></tr>
-                <tr><td style="text-align:left;">5. AAT</td><td>5</td><td>2</td><td>1</td><td>2</td><td>+4</td><td>7</td></tr>
-                <tr><td style="text-align:left;">6. ก้อง</td><td>5</td><td>1</td><td>1</td><td>3</td><td>-5</td><td>4</td></tr>
-                <tr><td style="text-align:left;">7. mxyjii_</td><td>4</td><td>0</td><td>0</td><td>4</td><td>-15</td><td>0</td></tr>
-                <tr><td style="text-align:left;">8. New Trafford</td><td>5</td><td>0</td><td>0</td><td>5</td><td>-15</td><td>0</td></tr>
-            </table>
-        </div>
+<header>
 
-        <!-- ฝั่งขวา: การ์ดทีมพร้อมป๊อปอัป -->
-        <div class="panel">
-            <div class="panel-title">SQUAD ANALYSIS (TAP TO VIEW)</div>
-            <div class="analysis-grid">
-                
-                <div class="team-card" onclick="openModal('อดเลย', '3194', '4-3-3', 'โต้กลับด้วยบอลยาว', 'IMG_7856.png', 'ปรับแต่ง DMF ลงลึก จัดหน้า 3 ตัวแบบไม่สมมาตร (Mbappe ถ่างซ้าย) แทคติกรับมือยากมาก')">
-                    <h3>อดเลย</h3><div class="power-badge">⭐ 3194</div><br><span class="style-txt">4-3-3</span>
-                </div>
+<h1>ELITE LEAGUE</h1>
 
-                <div class="team-card" onclick="openModal('Paris FC', '3147', '4-1-4-1', 'โต้กลับด้วยบอลยาว', 'IMG_7849.png', 'แพ็คแดนกลางแน่นหนา อาศัยความเร็ว Dembele ทะลวงแนวรับคู่แข่งด้วยบอลยาว')">
-                    <h3>Paris FC</h3><div class="power-badge">⭐ 3147</div><br><span class="style-txt">4-1-4-1</span>
-                </div>
+<h2>SEASON 2 • MATCHDAY 5</h2>
 
-                <div class="team-card" onclick="openModal('Inazuma 11', '3294', '4-2-1-3', 'สวนกลับเร็ว', 'IMG_7853.png', 'ใช้การสวนกลับเร็ว (Quick Counter) วาง Ronaldinho ปั้นเกมให้ Eto\'o และ Suarez วิ่งทะลวงช่อง')">
-                    <h3>Inazuma 11</h3><div class="power-badge">⭐ 3294</div><br><span class="style-txt">4-2-1-3</span>
-                </div>
+<div class="live">
 
-                <div class="team-card" onclick="openModal('AAT', '3300', '4-2-1-3', 'โต้กลับด้วยบอลยาว', 'IMG_7850.png', 'แดนหน้าจัดเต็ม Messi, Suarez, Mbappe ถือเป็นทีมที่สวนกลับได้น่ากลัวที่สุด')">
-                    <h3>AAT</h3><div class="power-badge">⭐ 3300</div><br><span class="style-txt">4-2-1-3</span>
-                </div>
+<div class="live-dot"></div>
 
-                <div class="team-card" onclick="openModal('ก้อง', '3159', '4-1-2-3', 'โต้กลับด้วยบอลยาว', 'IMG_7854.png', 'ดัน AMF ขึ้นสูงสนับสนุน Haaland ดักรอจังหวะสวนกลับด้วยบอลยาวข้ามหัวกองหลัง')">
-                    <h3>ก้อง</h3><div class="power-badge">⭐ 3159</div><br><span class="style-txt">4-1-2-3</span>
-                </div>
+<div>LIVE LEAGUE</div>
 
-                <div class="team-card" onclick="openModal('mxyjii_', '3222', '4-2-1-3', 'เน้นการครองบอล', 'IMG_7852.png', 'เล่นสไตล์เน้นการครองบอล (Possession) อาศัยความแม่นยำในการต่อบอลเจาะเข้าทำ')">
-                    <h3>mxyjii_</h3><div class="power-badge">⭐ 3222</div><br><span class="style-txt">4-2-1-3</span>
-                </div>
-
-                <div class="team-card" onclick="openModal('New Traf', '3312', '4-2-1-3', 'โต้กลับด้วยบอลยาว', 'IMG_7851.png', 'ขุมกำลังโหดสุดในลีค (3312) วางแกนหลักตำนาน Pirlo, Buffon, Rummenigge')">
-                    <h3>New Traf</h3><div class="power-badge">⭐ 3312</div><br><span class="style-txt">4-2-1-3</span>
-                </div>
-
-                <div class="team-card" onclick="openModal('นักล่าฯ', '3260', '4-3-1-2', 'โต้กลับด้วยบอลยาว', 'IMG_7875.png', 'สวนกลับอย่างรวดเร็มด้วยกองหน้าที่มีความเร็วถึง 2 ตัว ')">
-                    <h3>นักล่าฯ</h3><div class="power-badge">⭐ 3260</div><br><span class="style-txt">4-3-1-2</span>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM GRID -->
-    <div class="bottom-grid">
-        <div class="panel">
-            <div class="panel-title">RESULTS</div>
-            <div class="result-box"><div>🎃 นักล่าฯ</div><div class="result-score">2 - 5</div><div style="color:var(--neon-gold)">อดเลย 👑</div></div>
-            <div class="result-box"><div style="color:var(--neon-blue)">mxyjii_</div><div class="result-score">1 - 2</div><div>Paris FC</div></div>
-            <div class="result-box"><div style="color:var(--neon-pink)">Inazuma</div><div class="result-score">2 - 0</div><div style="color:#ff3333">New Traf</div></div>
-        </div>
-        
-        <div class="panel">
-            <div class="panel-title">SUMMARY</div>
-            <ul style="font-size:12px; line-height:1.8; margin:0; padding-left:15px;">
-                <li>🔥 <b style="color:var(--neon-gold)">อดเลย</b> บุกชนะนักล่ารอยยิ้ม 5-2 เก็บชัย 4 นัดรวด</li>
-                <li>🛡️ <b style="color:var(--neon-blue)">Paris FC</b> ชนะ mxyjii_ 2-1 ขยับขึ้นรองจ่าฝูง</li>
-                <li>⭐ <b style="color:var(--neon-pink)">Inazuma 11</b> เก็บชัย 2 นัดติด เหนือ New Trafford</li>
-            </ul>
-        </div>
-        
-        <div class="panel">
-            <div class="panel-title">HIGHLIGHTS</div>
-            <div class="highlights-grid">
-                <div class="hl-card"><div style="font-size:18px;">⭐</div><div class="hl-title">MVP</div><b>อดเลย</b></div>
-                <div class="hl-card"><div style="font-size:18px;">⚽</div><div class="hl-title">TOP SCORE</div><b>อดเลย</b></div>
-                <div class="hl-card"><div style="font-size:18px;">⚔️</div><div class="hl-title">ATTACK</div><b>อดเลย</b></div>
-                <div class="hl-card"><div style="font-size:18px;">🛡️</div><div class="hl-title">DEFENSE</div><b>Inazuma</b></div>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- Modal Popup -->
-<div class="modal-overlay" id="tacticsModal">
-    <div class="modal-content">
-        <button class="close-btn" onclick="closeModal()">×</button>
-        <div class="modal-img-container">
-            <img id="mImg" src="" alt="Squad Image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tk8gSU1BR0UgQVZBSUxBQkxFPC90ZXh0Pjwvc3ZnPg==';">
-        </div>
-        <div style="padding:10px;">
-            <h2 class="m-title" id="mName">Team Name</h2>
-            <div style="font-size:24px; color:var(--neon-gold); font-weight:800; margin-bottom:15px;" id="mPower">⭐ 0000</div>
-            <div class="stat-box"><span style="font-size:10px; color:#888;">FORMATION:</span> <b id="mForm" style="font-size:14px;">4-3-3</b></div>
-            <div class="stat-box"><span style="font-size:10px; color:#888;">PLAYSTYLE:</span> <b id="mStyle" style="font-size:14px;">สไตล์</b></div>
-            <div style="background:rgba(0,229,255,0.1); border-left:3px solid var(--neon-blue); padding:15px; margin-top:15px; font-size:13px; line-height:1.6;">
-                <b style="color:var(--neon-blue);">⚽ AI SCOUTING REPORT:</b><br><span id="mDesc">Analysis...</span>
-            </div>
-        </div>
-    </div>
+</header>
+
+<div class="main-grid">
+<!-- ================= MAIN LEFT ================= -->
+
+<div class="panel">
+
+<div class="panel-title">
+
+🏆 LEAGUE TABLE
+
 </div>
 
-<script>
-    const modal = document.getElementById('tacticsModal');
-    function openModal(name, power, formation, style, imgSrc, desc) {
-        document.getElementById('mName').innerText = name;
-        document.getElementById('mPower').innerText = '⭐ ' + power;
-        document.getElementById('mForm').innerText = formation;
-        document.getElementById('mStyle').innerText = style;
-        document.getElementById('mDesc').innerText = desc;
-        document.getElementById('mImg').src = imgSrc;
-        modal.classList.add('active');
-    }
-    function closeModal() { modal.classList.remove('active'); }
-    modal.addEventListener('click', function(e) { if(e.target === modal) closeModal(); });
-</script>
+<table>
 
-</body>
-</html>
+<thead>
+
+<tr>
+
+<th style="text-align:left;">TEAM</th>
+
+<th>P</th>
+
+<th>W</th>
+
+<th>D</th>
+
+<th>L</th>
+
+<th>GF</th>
+
+<th>GA</th>
+
+<th>GD</th>
+
+<th>PTS</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr class="rank1">
+
+<td style="text-align:left">
+
+👑 อดเลย
+
+</td>
+
+<td>5</td>
+
+<td>4</td>
+
+<td>1</td>
+
+<td>0</td>
+
+<td>18</td>
+
+<td>5</td>
+
+<td>+13</td>
+
+<td><b>13</b></td>
+
+</tr>
+
+<tr class="rank2">
+
+<td style="text-align:left">
+
+🥈 Paris FC
+
+</td>
+
+<td>5</td>
+
+<td>4</td>
+
+<td>0</td>
+
+<td>1</td>
+
+<td>13</td>
+
+<td>3</td>
+
+<td>+10</td>
+
+<td><b>12</b></td>
+
+</tr>
+
+<tr class="rank3">
+
+<td style="text-align:left">
+
+🥉 Inazuma 11
+
+</td>
+
+<td>5</td>
+
+<td>3</td>
+
+<td>0</td>
+
+<td>2</td>
+
+<td>10</td>
+
+<td>6</td>
+
+<td>+4</td>
+
+<td><b>9</b></td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+AAT
+
+</td>
+
+<td>5</td>
+
+<td>2</td>
+
+<td>1</td>
+
+<td>2</td>
+
+<td>11</td>
+
+<td>7</td>
+
+<td>+4</td>
+
+<td><b>7</b></td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+นักล่ารอยยิ้ม
+
+</td>
+
+<td>5</td>
+
+<td>2</td>
+
+<td>0</td>
+
+<td>3</td>
+
+<td>8</td>
+
+<td>14</td>
+
+<td>-6</td>
+
+<td><b>6</b></td>
+
+</tr>
+<tr>
+
+<td style="text-align:left">
+
+ก้อง
+
+</td>
+
+<td>5</td>
+
+<td>1</td>
+
+<td>1</td>
+
+<td>3</td>
+
+<td>8</td>
+
+<td>13</td>
+
+<td>-5</td>
+
+<td><b>4</b></td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+mxyjii_
+
+</td>
+
+<td>4</td>
+
+<td>0</td>
+
+<td>0</td>
+
+<td>4</td>
+
+<td>3</td>
+
+<td>18</td>
+
+<td>-15</td>
+
+<td><b>0</b></td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+New Trafford
+
+</td>
+
+<td>5</td>
+
+<td>0</td>
+
+<td>0</td>
+
+<td>5</td>
+
+<td>4</td>
+
+<td>19</td>
+
+<td>-15</td>
+
+<td><b>0</b></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<div style="margin-top:18px;">
+
+<div class="panel-title">
+
+📈 LEAGUE STATS
+
+</div>
+
+<div class="highlight">
+
+<div class="icon">⚽</div>
+
+<div class="title">
+
+TOTAL GOALS
+
+</div>
+
+<h2>75</h2>
+
+</div>
+
+<div style="height:12px"></div>
+
+<div class="highlight">
+
+<div class="icon">🔥</div>
+
+<div class="title">
+
+MATCHES PLAYED
+
+</div>
+
+<h2>19</h2>
+
+</div>
+
+<div style="height:12px"></div>
+
+<div class="highlight">
+
+<div class="icon">👑</div>
+
+<div class="title">
+
+LEAGUE LEADER
+
+</div>
+
+<h2>
+
+อดเลย
+
+</h2>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= RIGHT ================= -->
+
+<div class="panel">
+
+<div class="panel-title">
+
+👥 TEAM ANALYSIS
+
+</div>
+
+<div class="analysis-grid">
+<div class="team-card"
+onclick="openModal(
+'อดเลย',
+'3194',
+'4-3-3',
+'Long Ball Counter',
+'IMG_7856.png',
+'ปรับ DMF ลงต่ำ เล่นหน้า 3 ตัวไม่สมมาตร ใช้ Mbappe ถ่างซ้าย สวนกลับอันตรายมาก'
+)">
+
+<div class="team-logo">👑</div>
+
+<h3>อดเลย</h3>
+
+<div class="power">
+
+⭐ 3194
+
+</div>
+
+<div class="style">
+
+4-3-3 • Long Ball Counter
+
+</div>
+
+<div class="winrate">
+
+<span style="width:95%"></span>
+
+</div>
+
+<div class="form">
+
+<span class="win"></span>
+
+<span class="win"></span>
+
+<span class="draw"></span>
+
+<span class="win"></span>
+
+<span class="win"></span>
+
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'Paris FC',
+'3147',
+'4-1-4-1',
+'Long Ball Counter',
+'IMG_7849.png',
+'แดนกลางแน่น ใช้ Dembele เจาะริมเส้นและแทงบอลยาว'
+)">
+
+<div class="team-logo">🇫🇷</div>
+
+<h3>Paris FC</h3>
+
+<div class="power">
+
+⭐ 3147
+
+</div>
+
+<div class="style">
+
+4-1-4-1 • Long Ball Counter
+
+</div>
+
+<div class="winrate">
+
+<span style="width:90%"></span>
+
+</div>
+
+<div class="form">
+
+<span class="win"></span>
+
+<span class="win"></span>
+
+<span class="lose"></span>
+
+<span class="win"></span>
+
+<span class="win"></span>
+
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'Inazuma Eleven',
+'3294',
+'4-2-1-3',
+'Quick Counter',
+'IMG_7853.png',
+'Ronaldinho คุมเกมรุก Etoo และ Suarez วิ่งทำทางตลอด'
+)">
+
+<div class="team-logo">⚡</div>
+
+<h3>Inazuma 11</h3>
+
+<div class="power">
+
+⭐ 3294
+
+</div>
+
+<div class="style">
+
+4-2-1-3 • Quick Counter
+
+</div>
+
+<div class="winrate">
+
+<span style="width:72%"></span>
+
+</div>
+
+<div class="form">
+
+<span class="lose"></span>
+
+<span class="win"></span>
+
+<span class="lose"></span>
+
+<span class="win"></span>
+
+<span class="win"></span>
+
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'AAT',
+'3300',
+'4-2-1-3',
+'Long Ball Counter',
+'IMG_7850.png',
+'Messi Suarez Mbappe เกมสวนกลับดุดันที่สุดในลีก'
+)">
+
+<div class="team-logo">🔥</div>
+
+<h3>AAT</h3>
+
+<div class="power">
+
+⭐ 3300
+
+</div>
+
+<div class="style">
+
+4-2-1-3 • Long Ball Counter
+
+</div>
+
+<div class="winrate">
+
+<span style="width:63%"></span>
+
+</div>
+
+<div class="form">
+
+<span class="win"></span>
+
+<span class="draw"></span>
+
+<span class="lose"></span>
+
+<span class="lose"></span>
+
+<span class="win"></span>
+
+</div>
+
+</div>
+<div class="team-card"
+onclick="openModal(
+'ก้อง',
+'3159',
+'4-1-2-3',
+'Long Ball Counter',
+'IMG_7854.png',
+'Haaland ยืนค้ำหน้า AMF เติมสูง เน้นวางบอลยาวสวนกลับ'
+)">
+
+<div class="team-logo">💙</div>
+
+<h3>ก้อง</h3>
+
+<div class="power">
+⭐ 3159
+</div>
+
+<div class="style">
+4-1-2-3 • Long Ball Counter
+</div>
+
+<div class="winrate">
+<span style="width:38%"></span>
+</div>
+
+<div class="form">
+<span class="lose"></span>
+<span class="draw"></span>
+<span class="lose"></span>
+<span class="win"></span>
+<span class="lose"></span>
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'mxyjii_',
+'3222',
+'4-2-1-3',
+'Possession Game',
+'IMG_7852.png',
+'ต่อบอลสั้น ครองบอลเป็นหลัก อาศัยการเคลื่อนที่เปิดพื้นที่'
+)">
+
+<div class="team-logo">🎯</div>
+
+<h3>mxyjii_</h3>
+
+<div class="power">
+⭐ 3222
+</div>
+
+<div class="style">
+4-2-1-3 • Possession
+</div>
+
+<div class="winrate">
+<span style="width:8%"></span>
+</div>
+
+<div class="form">
+<span class="lose"></span>
+<span class="lose"></span>
+<span class="lose"></span>
+<span class="lose"></span>
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'New Trafford',
+'3312',
+'4-2-1-3',
+'Long Ball Counter',
+'IMG_7851.png',
+'ทีมพลังสูงสุดในลีก นำโดย Pirlo Buffon และ Rummenigge'
+)">
+
+<div class="team-logo">🏟️</div>
+
+<h3>New Trafford</h3>
+
+<div class="power">
+⭐ 3312
+</div>
+
+<div class="style">
+4-2-1-3 • Long Ball Counter
+</div>
+
+<div class="winrate">
+<span style="width:5%"></span>
+</div>
+
+<div class="form">
+<span class="lose"></span>
+<span class="lose"></span>
+<span class="lose"></span>
+<span class="lose"></span>
+<span class="lose"></span>
+</div>
+
+</div>
+
+<div class="team-card"
+onclick="openModal(
+'นักล่ารอยยิ้ม',
+'3260',
+'4-3-1-2',
+'Long Ball Counter',
+'IMG_7875.png',
+'กองหน้าความเร็วสูง 2 คน เล่นสวนกลับเร็วและเข้าทำทันที'
+)">
+
+<div class="team-logo">🎃</div>
+
+<h3>นักล่ารอยยิ้ม</h3>
+
+<div class="power">
+⭐ 3260
+</div>
+
+<div class="style">
+4-3-1-2 • Long Ball Counter
+</div>
+
+<div class="winrate">
+<span style="width:48%"></span>
+</div>
+
+<div class="form">
+<span class="lose"></span>
+<span class="win"></span>
+<span class="lose"></span>
+<span class="win"></span>
+<span class="lose"></span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="bottom-grid">
+<!-- ================= RESULTS ================= -->
+
+<div class="panel">
+
+<div class="panel-title">
+
+⚽ MATCH RESULTS
+
+</div>
+
+<div class="result-card">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<div>
+
+🎃 นักล่ารอยยิ้ม
+
+</div>
+
+<h2 style="color:var(--gold);">
+
+2 - 5
+
+</h2>
+
+<div>
+
+👑 อดเลย
+
+</div>
+
+</div>
+
+</div>
+
+<div class="result-card">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<div>
+
+🎯 mxyjii_
+
+</div>
+
+<h2 style="color:var(--gold);">
+
+1 - 2
+
+</h2>
+
+<div>
+
+🇫🇷 Paris FC
+
+</div>
+
+</div>
+
+</div>
+
+<div class="result-card">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<div>
+
+⚡ Inazuma 11
+
+</div>
+
+<h2 style="color:var(--gold);">
+
+2 - 0
+
+</h2>
+
+<div>
+
+🏟️ New Trafford
+
+</div>
+
+</div>
+
+</div>
+
+<div class="result-card">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<div>
+
+🔥 AAT
+
+</div>
+
+<h2 style="color:#999;">
+
+VS
+
+</h2>
+
+<div>
+
+💙 ก้อง
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= SUMMARY ================= -->
+
+<div class="panel">
+
+<div class="panel-title">
+
+📰 MATCHDAY SUMMARY
+
+</div>
+
+<div class="highlight">
+
+<div class="icon">
+
+👑
+
+</div>
+
+<div class="title">
+
+LEAGUE LEADER
+
+</div>
+
+<h3>
+
+อดเลย
+
+</h3>
+
+<p>
+
+บุกชนะนักล่ารอยยิ้ม 5-2
+เก็บ 13 คะแนน
+ยังไม่แพ้ใคร
+
+</p>
+
+</div>
+
+<div style="height:15px"></div>
+
+<div class="highlight">
+
+<div class="icon">
+
+🇫🇷
+
+</div>
+
+<div class="title">
+
+BIG WIN
+
+</div>
+
+<h3>
+
+Paris FC
+
+</h3>
+
+<p>
+
+เฉือน mxyjii_
+2-1
+
+ขึ้นรองจ่าฝูง
+
+</p>
+
+</div>
+
+<div style="height:15px"></div>
+
+<div class="highlight">
+
+<div class="icon">
+
+⚡
+
+</div>
+
+<div class="title">
+
+CLEAN SHEET
+
+</div>
+
+<h3>
+
+Inazuma 11
+
+</h3>
+
+<p>
+
+ชนะ New Trafford
+
+2-0
+
+</p>
+
+</div>
+
+</div>
+<!-- ================= HIGHLIGHTS ================= -->
+
+<div class="panel">
+
+<div class="panel-title">
+
+🏅 MATCHDAY HIGHLIGHTS
+
+</div>
+
+<div class="highlights">
+
+<div class="highlight">
+
+<div class="icon">
+
+👑
+
+</div>
+
+<div class="title">
+
+MVP
+
+</div>
+
+<h2>
+
+อดเลย
+
+</h2>
+
+<p>
+
+ชนะ 5-2
+
+</p>
+
+</div>
+
+<div class="highlight">
+
+<div class="icon">
+
+⚽
+
+</div>
+
+<div class="title">
+
+TOP SCORER
+
+</div>
+
+<h2>
+
+อดเลย
+
+</h2>
+
+<p>
+
+18 Goals
+
+</p>
+
+</div>
+
+<div class="highlight">
+
+<div class="icon">
+
+🛡
+
+</div>
+
+<div class="title">
+
+BEST DEFENSE
+
+</div>
+
+<h2>
+
+Paris FC
+
+</h2>
+
+<p>
+
+เสียเพียง 3 ประตู
+
+</p>
+
+</div>
+
+<div class="highlight">
+
+<div class="icon">
+
+⚡
+
+</div>
+
+<div class="title">
+
+HOT TEAM
+
+</div>
+
+<h2>
+
+Inazuma 11
+
+</h2>
+
+<p>
+
+ชนะ 2 นัดติด
+
+</p>
+
+</div>
+
+</div>
+
+<div style="height:25px;"></div>
+
+<div class="panel-title">
+
+📅 NEXT MATCHDAY
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>HOME</th>
+
+<th></th>
+
+<th>AWAY</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>👑 อดเลย</td>
+
+<td>VS</td>
+
+<td>🇫🇷 Paris FC</td>
+
+</tr>
+
+<tr>
+
+<td>⚡ Inazuma 11</td>
+
+<td>VS</td>
+
+<td>🔥 AAT</td>
+
+</tr>
+
+<tr>
+
+<td>🎃 นักล่ารอยยิ้ม</td>
+
+<td>VS</td>
+
+<td>💙 ก้อง</td>
+
+</tr>
+
+<tr>
+
+<td>🏟 New Trafford</td>
+
+<td>VS</td>
+
+<td>🎯 mxyjii_</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<div style="margin-top:20px;text-align:center;">
+
+<h3 style="color:var(--gold);">
+
+⏳ NEXT MATCH START
+
+</h3>
+
+<h1 id="countdown">
+
+00 : 00 : 00
+
+</h1>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- END BOTTOM GRID -->
